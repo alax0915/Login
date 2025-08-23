@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CarSeller - Sign Up & Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .container {
+            position: relative;
+            width: 850px;
+            height: 550px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .form-container {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            transition: all 0.6s ease-in-out;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .sign-up-container {
+            left: 0;
+            width: 50%;
+            z-index: 2;
+            opacity: 1;
+        }
+
+        .sign-in-container {
+            left: 0;
+            width: 50%;
+            z-index: 1;
+            opacity: 0;
+        }
+
+        .container.right-panel-active .sign-up-container {
+            transform: translateX(100%);
+            opacity: 0;
+            z-index: 1;
+        }
+
+        .container.right-panel-active .sign-in-container {
+            transform: translateX(100%);
+            opacity: 1;
+            z-index: 2;
+        }
+
+        .overlay-container {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 50%;
+            height: 100%;
+            overflow: hidden;
+            transition: transform 0.6s ease-in-out;
+            z-index: 100;
+        }
+
+        .container.right-panel-active .overlay-container {
+            transform: translateX(-100%);
+        }
+
+        .overlay {
+            background: linear-gradient(to right, #2b5876, #4e4376);
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: 0 0;
+            color: #ffffff;
+            position: relative;
+            left: -100%;
+            height: 100%;
+            width: 200%;
+            transform: translateX(0);
+            transition: transform 0.6s ease-in-out;
+        }
+
+        .container.right-panel-active .overlay {
+            transform: translateX(50%);
+        }
+
+        .overlay-panel {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 0 40px;
+            text-align: center;
+            top: 0;
+            height: 100%;
+            width: 50%;
+            transform: translateX(0);
+            transition: transform 0.6s ease-in-out;
+        }
+
+        .overlay-left {
+            transform: translateX(-20%);
+        }
+
+        .container.right-panel-active .overlay-left {
+            transform: translateX(0);
+        }
+
+        .overlay-right {
+            right: 0;
+            transform: translateX(0);
+        }
+
+        .container.right-panel-active .overlay-right {
+            transform: translateX(20%);
+        }
+
+        h1 {
+            font-weight: bold;
+            margin: 0;
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 20px;
+            letter-spacing: 0.5px;
+            margin: 20px 0 30px;
+            color: #555;
+        }
+
+        .form-container input {
+            background-color: #f0f0f0;
+            border: none;
+            padding: 12px 15px;
+            margin: 8px 0;
+            width: 100%;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-container input:focus {
+            outline: none;
+            box-shadow: 0 0 8px rgba(74, 144, 226, 0.6);
+            transform: scale(1.02);
+        }
+
+        button {
+            border-radius: 8px;
+            border: 1px solid #2b5876;
+            background-color: #2b5876;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: bold;
+            padding: 12px 45px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: transform 80ms ease-in, box-shadow 0.3s;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        button:focus {
+            outline: none;
+        }
+
+        button.ghost {
+            background-color: transparent;
+            border-color: #ffffff;
+        }
+
+        .social-container {
+            margin: 20px 0;
+        }
+
+        .social-container a {
+            border: 1px solid #dddddd;
+            border-radius: 50%;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 5px;
+            height: 40px;
+            width: 40px;
+            transition: all 0.3s;
+        }
+
+        .social-container a:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .error-message {
+            color: #ff4b4b;
+            font-size: 14px;
+            margin-top: 10px;
+            min-height: 20px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .error-message.show {
+            opacity: 1;
+        }
+
+        .success-message {
+            color: #2ecc71;
+            font-size: 14px;
+            margin-top: 10px;
+            min-height: 20px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .success-message.show {
+            opacity: 1;
+        }
+
+        .car-animation {
+            position: absolute;
+            bottom: 20px;
+            left: -100px;
+            font-size: 40px;
+            animation: drive 15s linear infinite;
+        }
+
+        @keyframes drive {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(1200px); }
+        }
+
+        .logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            z-index: 1000;
+        }
+
+        .logo i {
+            margin-right: 10px;
+            color: #fdbb2d;
+        }
+    </style>
+</head>
+<body>
+    <div class="logo">
+        <i class="fas fa-car"></i> CarSeller
+    </div>
+
+    <div class="container" id="container">
+        <div class="form-container sign-up-container">
+            <form id="signupForm">
+                <h1>Create Account</h1>
+                <div class="social-container">
+                    <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+                    <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+                <span>or use your email for registration</span>
+                <input type="text" id="signupName" placeholder="Name" required />
+                <input type="email" id="signupEmail" placeholder="Email" required />
+                <input type="password" id="signupPassword" placeholder="Password" required />
+                <button type="submit">Sign Up</button>
+                <div class="success-message" id="signupSuccess">Account created successfully! You can now sign in.</div>
+            </form>
+        </div>
+        <div class="form-container sign-in-container">
+            <form id="signinForm">
+                <h1>Sign In</h1>
+                <div class="social-container">
+                    <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+                    <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+                <span>or use your account</span>
+                <input type="email" id="signinEmail" placeholder="Email" required />
+                <input type="password" id="signinPassword" placeholder="Password" required />
+                <a href="#">Forgot your password?</a>
+                <button type="submit">Sign In</button>
+                <div class="error-message" id="signinError">Login error! Please check your credentials.</div>
+            </form>
+        </div>
+        <div class="overlay-container">
+            <div class="overlay">
+                <div class="overlay-panel overlay-left">
+                    <h1>Welcome Back!</h1>
+                    <p>To keep connected with us please login with your personal info</p>
+                    <button class="ghost" id="signIn">Sign In</button>
+                </div>
+                <div class="overlay-panel overlay-right">
+                    <h1>Hello, Friend!</h1>
+                    <p>Enter your personal details and start your journey with us</p>
+                    <button class="ghost" id="signUp">Sign Up</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="car-animation">
+        <i class="fas fa-car-side"></i>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const signUpButton = document.getElementById('signUp');
+            const signInButton = document.getElementById('signIn');
+            const container = document.getElementById('container');
+            const signupForm = document.getElementById('signupForm');
+            const signinForm = document.getElementById('signinForm');
+            const signinError = document.getElementById('signinError');
+            const signupSuccess = document.getElementById('signupSuccess');
+
+            signUpButton.addEventListener('click', () => {
+                container.classList.add('right-panel-active');
+            });
+
+            signInButton.addEventListener('click', () => {
+                container.classList.remove('right-panel-active');
+            });
+
+            // Check if there are saved credentials
+            const savedUsers = JSON.parse(localStorage.getItem('users')) || [];
+            
+            // Sign up form submission
+            signupForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const name = document.getElementById('signupName').value;
+                const email = document.getElementById('signupEmail').value;
+                const password = document.getElementById('signupPassword').value;
+                
+                // Save user to localStorage
+                const user = { name, email, password };
+                savedUsers.push(user);
+                localStorage.setItem('users', JSON.stringify(savedUsers));
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                
+                // Show success message
+                signupSuccess.classList.add('show');
+                
+                // Clear form
+                signupForm.reset();
+                
+                // After 2 seconds, switch to sign in
+                setTimeout(() => {
+                    signupSuccess.classList.remove('show');
+                    container.classList.remove('right-panel-active');
+                }, 2000);
+            });
+            
+            // Sign in form submission
+            signinForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const email = document.getElementById('signinEmail').value;
+                const password = document.getElementById('signinPassword').value;
+                
+                // Check if user exists
+                const user = savedUsers.find(u => u.email === email && u.password === password);
+                
+                if (user) {
+                    // Save current user
+                    localStorage.setItem('currentUser', JSON.stringify(user));
+                    
+                    // Redirect to car seller website after successful login
+                    window.location.href = 'https://alax0915.github.io/car-seller';
+                } else {
+                    // Show error message
+                    signinError.classList.add('show');
+                    
+                    // Hide error after 3 seconds
+                    setTimeout(() => {
+                        signinError.classList.remove('show');
+                    }, 3000);
+                }
+            });
+
+            // Add input animations
+            const inputs = document.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.addEventListener('focus', () => {
+                    input.parentElement.style.transform = 'scale(1.02)';
+                });
+                
+                input.addEventListener('blur', () => {
+                    input.parentElement.style.transform = 'scale(1)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
